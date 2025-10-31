@@ -1,0 +1,93 @@
+###Python代码
+import tkinter as tk
+import random
+import threading
+import time
+import sys
+
+# 30+ 条正能量语录
+messages = [
+    "今天你辛苦啦 🌟", "已经做得很好啦 👍", "继续加油，我相信你 💪", "别太累了，休息一下 😌",
+    "你真的很棒 💖", "你的努力一定会有回报 ✨", "笑一笑，世界更美好 😊", "每一步都算数，加油！🏃‍♂️",
+    "保持热爱，奔赴山海 💫", "你值得被喜欢 💐", "再小的进步，也是向前 💎", "别担心，一切都会好起来的 🌈",
+    "你是独一无二的存在 💫", "就这样继续闪光吧 ✨", "喝口水，放松一下～ 💧", "你今天也很勇敢 💪",
+    "你的笑容真治愈 😄", "努力的你最美 🌻", "每个今天，都是全新的开始 🌅", "坚持一下，再走一步就到了！🚶‍♂️",
+    "你已经做得比昨天更好啦 👏", "生活不易，但你值得 🌼", "温柔一点，也对自己温柔点 💗",
+    "你不是一个人，我在为你加油 🙌", "阳光正好，适合微笑 🌞", "相信自己，你可以的！🔥",
+    "别忘了夸夸自己 👑", "累了就看看天，风一直都在 🌤", "世界因为有你而更可爱 💕",
+    "做自己喜欢的事吧 🌷", "你值得被温柔以待 💖", "小目标也值得庆祝 🎉", "心怀希望，一切都不晚 🌟",
+    "生活在发光，你也是 ✨", "向前走吧，前方有光 💡"
+]
+
+# 随机头像颜色
+avatar_colors = ["#4CAF50", "#FFB300", "#2196F3", "#E91E63", "#9C27B0", "#009688", "#FF5722"]
+
+# 用于保存所有窗口的引用
+all_windows = []
+
+def create_popup():
+    """创建一个微信风格的弹窗"""
+    root = tk.Tk()
+    root.overrideredirect(True)
+    root.attributes("-topmost", True)
+    root.attributes("-alpha", 0.97)
+
+    width, height = 340, 110
+    screen_w = root.winfo_screenwidth()
+    screen_h = root.winfo_screenheight()
+    x = random.randint(0, screen_w - width)
+    y = random.randint(0, screen_h - height)
+    root.geometry(f"{width}x{height}+{x}+{y}")
+
+    # 阴影背景与内容层
+    outer = tk.Frame(root, bg="#dcdcdc")
+    outer.pack(fill="both", expand=True)
+    inner = tk.Frame(outer, bg="#f6f6f6", relief="flat", bd=0)
+    inner.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.96)
+
+    # 头像
+    color = random.choice(avatar_colors)
+    avatar = tk.Canvas(inner, width=40, height=40, bg="#f6f6f6", highlightthickness=0)
+    avatar.create_oval(5, 5, 35, 35, fill=color, outline="")
+    avatar.place(x=10, y=30)
+
+    # 昵称
+    name_label = tk.Label(inner, text=random.choice(["小心心 💚", "暖阳 ☀️", "小可爱 🌸", "治愈君 🌿", "正能量bot ⚡"]),
+                          font=("微软雅黑", 10, "bold"), bg="#f6f6f6", fg="#333")
+    name_label.place(x=60, y=8)
+
+    # 气泡
+    bubble = tk.Frame(inner, bg="#95EC69", bd=0, padx=10, pady=6)
+    msg = tk.Label(bubble,
+                   text=random.choice(messages),
+                   bg="#95EC69", fg="#000000",
+                   font=("微软雅黑", 11),
+                   wraplength=230, justify="left")
+    msg.pack()
+    bubble.place(x=60, y=30)
+
+    all_windows.append(root)
+    root.mainloop()
+
+def close_all_popups():
+    """关闭所有弹窗并退出程序"""
+    print("⏰ 时间到！正在关闭所有弹窗...")
+    for w in all_windows:
+            w.destroy()
+    sys.exit(0)
+
+def main():
+    start_time = time.time()
+    duration = 30  # 程序运行时间（秒）
+
+    # 定时线程：60秒后关闭所有弹窗
+    threading.Timer(duration, close_all_popups).start()
+
+    while True:
+        if time.time() - start_time > duration:
+            break
+        threading.Thread(target=create_popup).start()
+        time.sleep(0.6)
+
+if __name__ == "__main__":
+    main()
